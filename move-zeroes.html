@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Move Zeroes — Pointer Swap Visualizer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .tile {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+      border: 1px solid #ccc;
+      margin: 2px;
+      font-weight: bold;
+    }
+    .target {
+      background-color: #f3f3f3;
+    }
+    .pointer {
+      height: 20px;
+      line-height: 20px;
+    }
+    .pointer-line {
+      margin-top: 2px;
+    }
+    .pointer-control {
+      margin-bottom: 4px;
+    }
+    select, button {
+      margin: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Move Zeroes — Pointer Swap Visualizer</h2>
+  <p><strong>Use these controls to move all zeroes to the back (without changing the order of the other numbers).</strong></p>
+
+  <div id="list"></div>
+  <div id="pointer-lines"></div>
+  <p><strong>Target:</strong></p>
+  <div id="target"></div>
+
+  <hr />
+
+  <div>
+    <h4>Pointer Controls</h4>
+    <div id="pointer-controls"></div>
+  </div>
+
+  <div>
+    <h4>Swap</h4>
+    <label for="swap-a">Swap Pointer A:</label>
+    <select id="swap-a" onchange="setSwap('a', this.value)"></select>
+    <label for="swap-b">Swap Pointer B:</label>
+    <select id="swap-b" onchange="setSwap('b', this.value)"></select>
+    <button onclick="performSwap()">Swap</button>
+    <span id="swap-info"></span>
+  </div>
+
+  <div>
+    <h4>Controls</h4>
+    <button onclick="addPointer(true)">Add Pointer at Start</button>
+    <button onclick="addPointer(false)">Add Pointer at End</button>
+    <button onclick="reset()">Reset</button>
+  </div>
+
+  <script>
+    // move-zeroes-game.js
+
+    const initialList = [3, 4, 0, 1, 0, 3, 4, 0, 0, 5];
+    let list = [...initialList];
+    let pointers = [];
+    let pointerId = 0;
+    let swapCount = 0;
+    let swapA = null;
+    let swapB = null;
+
+    const targetList = [...list.filter(n => n !== 0), ...list.filter(n => n === 0)];
+
+    function render() {
+      const listEl = document.getElementById("list");
+      const targetEl = document.getElementById("target");
+      const pointerEl = document.getElementById("pointer-lines");
+      const controlsEl = document.getElementById("pointer-controls");
+      const swapInfo = document.getElementById("swap-info");
+
+      listEl.innerHTML = list.map(n => `<div class="tile">${n}</div>`).join("");
+      targetEl.innerHTML = targetList.map(n => `<div class="tile target">${n}</div>`).join("");
+
+      const pointerLines = new Array(pointers.length).fill("").map(() => new Array(list.length).fill(" "));
+      pointers.forEach((p, i) => {
+        pointerLines[i][p.index] = p.name;
+      });
+
+      pointerEl.innerHTML = pointerLines
+        .map(line => `<div class="pointer-line">${line.map(c => `<div class="tile pointer">${c}</div>`).join("")}</div>`)
+        .join("");
+
+      controlsEl.innerHTML = pointers
+        .map(p => `
+          <div class="pointer-control">
+            ${p.name}:
+            <button onclick="movePointer('${p.name}', -1)">&larr;</button>
+            <button onclick="movePointer('${p.name}', 1)">&rarr;</button>
+          </div>
+        `).join("");
+
+      swapInfo.innerHTML = `Swaps: ${swapCount}`;
+
+      document.getElementById("swap-a").innerHTML = pointers.map(p => `<option value="${p.name}">${p.name}</option>`).join("");
+      document.getElementById("swap-b").innerHTML = pointers.map(p => `<option value="${p.name}">${p.name}</option>`).join("");
+
+      if (swapA && swapB) {
+        document.getElementById("swap-a").value = swapA;
+        document.getElementById("swap-b").value = swapB;
+      }
+    }
+
+    function addPointer(atStart) {
+      const name = String.fromCharCode(105 + pointerId); // i, j, k...
+      const index = atStart ? 0 : list.length - 1;
+      pointers.push({ name, index });
+      pointerId++;
+      if (pointers.length === 2) {
+        swapA = pointers[0].name;
+        swapB = pointers[1].name;
+      }
+      render();
+    }
+
+    function movePointer(name, dir) {
+      const p = pointers.find(p => p.name === name);
+      if (!p) return;
+      const newIndex = p.index + dir;
+      if (newIndex >= 0 && newIndex < list.length) {
+        p.index = newIndex;
+      }
+      render();
+    }
+
+    function performSwap() {
+      if (!swapA || !swapB) return;
+      const a = pointers.find(p => p.name === swapA);
+      const b = pointers.find(p => p.name === swapB);
+      if (!a || !b || a.index === b.index) return;
+      [list[a.index], list[b.index]] = [list[b.index], list[a.index]];
+      swapCount++;
+      render();
+    }
+
+    function reset() {
+      list = [...initialList];
+      pointers = [];
+      pointerId = 0;
+      swapCount = 0;
+      swapA = null;
+      swapB = null;
+      render();
+    }
+
+    function setSwap(which, value) {
+      if (which === 'a') swapA = value;
+      if (which === 'b') swapB = value;
+    }
+
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</body>
+</html>
