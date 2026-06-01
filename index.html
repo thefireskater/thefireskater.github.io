@@ -1,1 +1,403 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closed Loop — AI-Native Operations, built for you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e0d;
+    --bg-soft:#0f1513;
+    --panel:#121a17;
+    --ink:#e8efe9;
+    --ink-dim:#8ea399;
+    --ink-faint:#5b6e66;
+    --acc:#4ade80;
+    --acc-deep:#16a34a;
+    --acc-glow:rgba(74,222,128,.14);
+    --line:#1d2925;
+    --warn:#f0b429;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --serif:'Fraunces',Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--mono);
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background:
+      radial-gradient(900px 500px at 78% -8%, var(--acc-glow), transparent 60%),
+      radial-gradient(700px 600px at -10% 100%, rgba(22,163,74,.08), transparent 55%);
+    pointer-events:none;z-index:0;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 28px}
+  a{color:inherit;text-decoration:none}
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(10,14,13,.72);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:.02em}
+  .brand .glyph{width:22px;height:22px;flex:none}
+  .brand .glyph circle{fill:none;stroke:var(--acc);stroke-width:2.2}
+  .brand .dot{fill:var(--acc)}
+  .nav-links{display:flex;gap:30px;font-size:13px;color:var(--ink-dim)}
+  .nav-links a{transition:color .2s}
+  .nav-links a:hover{color:var(--acc)}
+  .nav-cta{
+    font-size:13px;font-weight:600;color:var(--bg);
+    background:var(--acc);padding:9px 16px;border-radius:2px;
+    transition:transform .15s, box-shadow .2s;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px -6px var(--acc)}
+  @media(max-width:720px){.nav-links{display:none}}
+
+  /* HERO */
+  header{padding:96px 0 76px;border-bottom:1px solid var(--line);position:relative}
+  .eyebrow{
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--acc);display:flex;align-items:center;gap:10px;margin-bottom:26px;
+  }
+  .eyebrow::before{content:"";width:30px;height:1px;background:var(--acc)}
+  h1{
+    font-family:var(--serif);font-weight:500;
+    font-size:clamp(38px,6.4vw,68px);line-height:1.04;
+    letter-spacing:-.02em;margin-bottom:26px;max-width:16ch;
+  }
+  h1 em{font-style:italic;color:var(--acc)}
+  .lede{font-size:clamp(16px,2vw,19px);color:var(--ink-dim);max-width:60ch;line-height:1.7}
+  .lede b{color:var(--ink);font-weight:500}
+  .hero-actions{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap}
+  .btn{
+    font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;
+    padding:13px 24px;border-radius:2px;transition:all .18s;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--acc);color:var(--bg)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px -10px var(--acc)}
+  .btn-ghost{border-color:var(--line);color:var(--ink-dim);background:transparent}
+  .btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+  .metrics{display:flex;gap:40px;margin-top:64px;flex-wrap:wrap}
+  .metric .num{font-family:var(--serif);font-size:34px;color:var(--ink);line-height:1}
+  .metric .num span{color:var(--acc)}
+  .metric .lbl{font-size:12px;color:var(--ink-faint);letter-spacing:.04em;margin-top:8px;max-width:22ch}
+
+  /* LOOP DIAGRAM */
+  .loop-band{border-bottom:1px solid var(--line);padding:64px 0;background:var(--bg-soft)}
+  .loop-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);text-align:center;margin-bottom:38px}
+  .loop{display:flex;align-items:stretch;justify-content:center;gap:0;flex-wrap:wrap}
+  .node{
+    flex:1;min-width:150px;border:1px solid var(--line);background:var(--panel);
+    padding:18px 16px;position:relative;transition:border-color .25s, transform .25s;
+  }
+  .node:hover{border-color:var(--acc);transform:translateY(-3px)}
+  .node .k{font-size:11px;color:var(--acc);letter-spacing:.12em}
+  .node .t{font-size:14px;color:var(--ink);margin-top:6px;font-weight:500}
+  .node .d{font-size:12px;color:var(--ink-faint);margin-top:6px;line-height:1.5}
+  .arrow{display:flex;align-items:center;color:var(--ink-faint);font-size:18px;padding:0 6px}
+  .loop-foot{text-align:center;margin-top:26px;font-size:13px;color:var(--ink-dim)}
+  .loop-foot span{color:var(--acc)}
+  @media(max-width:760px){.arrow{transform:rotate(90deg);width:100%;justify-content:center;padding:8px 0}}
+
+  /* SECTION GENERIC */
+  section{padding:90px 0;border-bottom:1px solid var(--line)}
+  .sec-head{margin-bottom:54px}
+  .sec-tag{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:16px}
+  .sec-title{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,42px);letter-spacing:-.01em;line-height:1.1;max-width:20ch}
+  .sec-sub{color:var(--ink-dim);max-width:62ch;margin-top:18px;font-size:15px}
+
+  /* PILLARS */
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  @media(max-width:860px){.pillars{grid-template-columns:1fr}}
+  .pillar{
+    border:1px solid var(--line);background:var(--panel);padding:30px 26px;
+    position:relative;overflow:hidden;transition:border-color .25s;
+  }
+  .pillar:hover{border-color:var(--acc-deep)}
+  .pillar .idx{font-family:var(--serif);font-size:50px;color:var(--line);line-height:1;position:absolute;top:18px;right:22px;transition:color .25s}
+  .pillar:hover .idx{color:var(--acc-glow)}
+  .pillar h3{font-family:var(--serif);font-weight:500;font-size:23px;margin-bottom:14px;max-width:14ch}
+  .pillar p{font-size:13.5px;color:var(--ink-dim);line-height:1.65}
+  .pillar ul{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .pillar li{font-size:12.5px;color:var(--ink-faint);padding-left:18px;position:relative}
+  .pillar li::before{content:"→";position:absolute;left:0;color:var(--acc)}
+
+  /* WORKFLOWS */
+  .flows{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  @media(max-width:760px){.flows{grid-template-columns:1fr}}
+  .flow{background:var(--bg-soft);padding:28px 26px;transition:background .25s}
+  .flow:hover{background:var(--panel)}
+  .flow .tag{font-size:11px;letter-spacing:.1em;color:var(--acc);text-transform:uppercase}
+  .flow h4{font-size:16px;color:var(--ink);margin:10px 0 8px;font-weight:600}
+  .flow p{font-size:13px;color:var(--ink-dim);line-height:1.6}
+
+  /* ENGAGEMENT TIMELINE */
+  .phases{display:flex;flex-direction:column;gap:0}
+  .phase{
+    display:grid;grid-template-columns:120px 1fr;gap:30px;
+    padding:26px 0;border-top:1px solid var(--line);align-items:start;
+  }
+  .phase:last-child{border-bottom:1px solid var(--line)}
+  .phase .when{font-size:12px;color:var(--acc);letter-spacing:.05em;padding-top:3px}
+  .phase .ph-body h4{font-family:var(--serif);font-weight:500;font-size:21px;margin-bottom:8px}
+  .phase .ph-body p{font-size:13.5px;color:var(--ink-dim);max-width:64ch}
+  .phase .out{font-size:12px;color:var(--ink-faint);margin-top:10px;display:inline-block;border:1px solid var(--line);padding:4px 10px;border-radius:2px}
+  .phase .out b{color:var(--acc);font-weight:500}
+  @media(max-width:640px){.phase{grid-template-columns:1fr;gap:10px}}
+
+  /* GUARDRAILS */
+  .guard{display:grid;grid-template-columns:1.1fr .9fr;gap:46px;align-items:center}
+  @media(max-width:760px){.guard{grid-template-columns:1fr}}
+  .guard-list{display:flex;flex-direction:column;gap:18px}
+  .guard-item{display:flex;gap:14px;align-items:flex-start}
+  .guard-item .ic{color:var(--acc);font-size:15px;padding-top:2px;flex:none}
+  .guard-item .gx h5{font-size:14px;color:var(--ink);margin-bottom:3px}
+  .guard-item .gx p{font-size:13px;color:var(--ink-dim);line-height:1.55}
+  .guard-card{
+    border:1px solid var(--line);background:var(--panel);padding:26px;font-size:12.5px;line-height:1.85;color:var(--ink-dim);
+  }
+  .guard-card .cmt{color:var(--ink-faint)}
+  .guard-card .gk{color:var(--acc)}
+  .guard-card .gw{color:var(--warn)}
+
+  /* CTA */
+  .cta{padding:100px 0;text-align:center;border-bottom:1px solid var(--line);position:relative}
+  .cta h2{font-family:var(--serif);font-weight:500;font-size:clamp(30px,5vw,52px);line-height:1.08;letter-spacing:-.02em;max-width:18ch;margin:0 auto 22px}
+  .cta h2 em{font-style:italic;color:var(--acc)}
+  .cta p{color:var(--ink-dim);max-width:50ch;margin:0 auto 36px;font-size:16px}
+
+  footer{padding:44px 0;color:var(--ink-faint);font-size:12px}
+  .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+  .foot-inner .brand{font-size:14px;color:var(--ink-dim)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <svg class="glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle class="dot" cx="21" cy="12" r="2.4"/></svg>
+      CLOSED&nbsp;LOOP
+    </a>
+    <div class="nav-links">
+      <a href="#how">The Loop</a>
+      <a href="#pillars">What I Build</a>
+      <a href="#workflows">Workflows</a>
+      <a href="#engagement">Engagement</a>
+      <a href="#guardrails">Guardrails</a>
+    </div>
+    <a class="nav-cta" href="#contact">Book a scoping call</a>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="wrap">
+    <div class="eyebrow">Fractional CTO · AI-Native Operations</div>
+    <h1 class="reveal">I make your company <em>queryable</em> — and self-improving.</h1>
+    <p class="lede reveal">A company brain, an unattended coding agent, and agentic workflows — installed, proven on your real processes, and handed back to your team. <b>Every important process becomes a closed loop</b> that captures information, feeds it back, and gets better while you sleep.</p>
+    <div class="hero-actions reveal">
+      <a class="btn btn-primary" href="#contact">Book a scoping call</a>
+      <a class="btn btn-ghost" href="#how">See how it works</a>
+    </div>
+    <div class="metrics reveal">
+      <div class="metric"><div class="num"><span>~5×</span></div><div class="lbl">revenue per employee teams are reaching vs. 18 months ago</div></div>
+      <div class="metric"><div class="num">8&nbsp;<span>wks</span></div><div class="lbl">from audit to several live, self-improving loops</div></div>
+      <div class="metric"><div class="num">100<span>%</span></div><div class="lbl">owner-operable at handoff — no lock-in to me</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- LOOP -->
+<div class="loop-band" id="how">
+  <div class="wrap">
+    <div class="loop-title">The operating principle — one intelligent closed loop</div>
+    <div class="loop">
+      <div class="node reveal"><div class="k">01 / SENSE</div><div class="t">Capture</div><div class="d">Slack, email, tickets, calls, telemetry land in one context layer</div></div>
+      <div class="arrow">→</div>
+      <div class="node reveal"><div class="k">02 / DECIDE</div><div class="t">Reason</div><div class="d">Agents query the business and act through a tool + skill registry</div></div>
+      <div class="arrow">→</div>
+      <div class="node reveal"><div class="k">03 / ACT</div><div class="t">Execute</div><div class="d">Workflows run — gated by policy and human-in-the-loop thresholds</div></div>
+      <div class="arrow">→</div>
+      <div class="node reveal"><div class="k">04 / LEARN</div><div class="t">Improve</div><div class="d">Gaps become new tools and skills — built and shipped overnight</div></div>
+    </div>
+    <div class="loop-foot reveal">Output loops back to input. <span>The system always has an up-to-date view of what's actually happening.</span></div>
+  </div>
+</div>
+
+<!-- PILLARS -->
+<section id="pillars">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-tag">What I build</div>
+      <div class="sec-title">Three pillars, one compounding system.</div>
+      <p class="sec-sub">Each works on its own. Together they form the closed loop — context feeds the agents, the agents do the work, the work teaches the system.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="idx">01</div>
+        <h3>Company Brain</h3>
+        <p>A central intelligence with read access to where work actually happens, all landing in one common context layer — because agents reason far better when context lives in one place, like a coding agent on a monorepo.</p>
+        <ul>
+          <li>One queryable warehouse of company truth</li>
+          <li>Tool registry (MCP) of deterministic actions</li>
+          <li>Skill registry — reusable, DRY &amp; MECE</li>
+          <li>Ask the business questions in plain language</li>
+        </ul>
+      </div>
+      <div class="pillar reveal">
+        <div class="idx">02</div>
+        <h3>Unattended Coding Agent</h3>
+        <p>Specs and tests define success; agents implement until tests pass. PRs are risk-scored — low-risk auto-merges, higher-risk routes to a human. Elevated permissions only inside a sandbox to contain blast radius.</p>
+        <ul>
+          <li>Three quality gates: plan, hooks, AGENTS.md</li>
+          <li>Layered review on every PR</li>
+          <li>Model-agnostic harness — swap the best model</li>
+          <li>Auditable merge &amp; deploy trail</li>
+        </ul>
+      </div>
+      <div class="pillar reveal">
+        <div class="idx">03</div>
+        <h3>Agentic Workflows</h3>
+        <p>Domain experts encode their own processes as skills in plain English — no waiting on engineering. The system detects what it can't do and builds the missing capability overnight.</p>
+        <ul>
+          <li>Finance, GTM, ops — not just engineering</li>
+          <li>Monitoring agent closes its own gaps</li>
+          <li>Analytics agent runs &amp; ships A/B tests</li>
+          <li>Sprint plans grounded in what shipped</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOWS -->
+<section id="workflows">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-tag">In practice</div>
+      <div class="sec-title">What a closed loop actually does for you.</div>
+      <p class="sec-sub">Concrete loops I stand up early, because they pay for the engagement on their own.</p>
+    </div>
+    <div class="flows">
+      <div class="flow reveal"><div class="tag">Self-healing</div><h4>The overnight builder</h4><p>A monitoring agent watches every internal query, spots what failed, and builds the missing tool, skill, or view overnight — then merges and deploys. The next morning, the query just works.</p></div>
+      <div class="flow reveal"><div class="tag">Growth</div><h4>The funnel optimizer</h4><p>An agent finds the highest-friction step in your funnel, researches best practice, runs an A/B test for a week, picks the winner, and ships it. Then does it again.</p></div>
+      <div class="flow reveal"><div class="tag">Engineering</div><h4>The sprint planner</h4><p>With visibility into what actually shipped last cycle and how it met real customer needs, the agent proposes sprint plans that are far more predictable and on-track.</p></div>
+      <div class="flow reveal"><div class="tag">Operations</div><h4>The encoded expert</h4><p>Finance and ops teams encode their own workflows in plain English — journal entries, logged rounds, routine processes — without pulling engineers into the loop.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ENGAGEMENT -->
+<section id="engagement">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-tag">How I run it</div>
+      <div class="sec-title">A fixed path from messy reality to a system that compounds.</div>
+      <p class="sec-sub">Weeks are indicative and scoped to your availability and stack. Every phase ends with something live.</p>
+    </div>
+    <div class="phases">
+      <div class="phase reveal">
+        <div class="when">WEEKS 1–2</div>
+        <div class="ph-body"><h4>Audit &amp; wire-up</h4><p>Map your key processes and connect the two or three highest-value sources into a common context layer.</p><span class="out"><b>Outcome:</b>&nbsp;a queryable foundation — “ask the business a question” works</span></div>
+      </div>
+      <div class="phase reveal">
+        <div class="when">WEEKS 3–5</div>
+        <div class="ph-body"><h4>First closed loops</h4><p>Stand up the Slack-native harness, the tool and skill registries, and one unattended coding loop with quality gates.</p><span class="out"><b>Outcome:</b>&nbsp;one workflow self-improving end-to-end; low-risk PRs auto-merging in a sandbox</span></div>
+      </div>
+      <div class="phase reveal">
+        <div class="when">WEEKS 6–8</div>
+        <div class="ph-body"><h4>Expansion</h4><p>Add agents for your highest-ROI processes and a monitoring agent that builds missing capabilities overnight.</p><span class="out"><b>Outcome:</b>&nbsp;several loops live; the system improves without intervention</span></div>
+      </div>
+      <div class="phase reveal">
+        <div class="when">HANDOFF</div>
+        <div class="ph-body"><h4>Owner-operable</h4><p>Runbooks, governance, and team enablement so your people extend the system after I roll off.</p><span class="out"><b>Outcome:</b>&nbsp;a system your team owns — clear escalation and full audit trail</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUARDRAILS -->
+<section id="guardrails">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-tag">Trust &amp; governance</div>
+      <div class="sec-title">Autonomy with a hand on the brake.</div>
+    </div>
+    <div class="guard">
+      <div class="guard-list">
+        <div class="guard-item reveal"><div class="ic">◆</div><div class="gx"><h5>A policy layer, not a free-for-all</h5><p>Explicit rules for what agents may do alone, what needs human approval, and what must be logged.</p></div></div>
+        <div class="guard-item reveal"><div class="ic">◆</div><div class="gx"><h5>Risk-scored autonomy</h5><p>Low-risk actions flow; high-stakes ones stop for review. The threshold is yours to set.</p></div></div>
+        <div class="guard-item reveal"><div class="ic">◆</div><div class="gx"><h5>Humans where humans matter</h5><p>High-emotion, high-stakes moments — key sales calls, sensitive issues — stay human-led.</p></div></div>
+        <div class="guard-item reveal"><div class="ic">◆</div><div class="gx"><h5>Every action leaves an artifact</h5><p>So the central intelligence can learn from it — and so you can audit it later.</p></div></div>
+      </div>
+      <div class="guard-card reveal">
+        <div class="cmt"># policy layer — illustrative</div><br>
+        <span class="gk">query.readonly</span>      → auto<br>
+        <span class="gk">skill.create</span>        → auto + log<br>
+        <span class="gk">pr.merge</span> <span class="cmt">(low&nbsp;risk)</span>  → auto<br>
+        <span class="gw">pr.merge</span> <span class="cmt">(high&nbsp;risk)</span> <span class="gw">→ human</span><br>
+        <span class="gw">customer.outreach</span>   <span class="gw">→ human</span><br>
+        <span class="gk">deploy.sandbox</span>      → auto<br>
+        <span class="gw">deploy.prod</span>         <span class="gw">→ human</span><br>
+        <br><div class="cmt"># everything logged · everything reversible</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta" id="contact">
+  <div class="wrap">
+    <h2 class="reveal">Let's find your first <em>closed loop.</em></h2>
+    <p class="reveal">A short scoping call: I'll map where your company is already legible to AI, where it isn't, and which loop pays for itself first.</p>
+    <a class="btn btn-primary reveal" href="mailto:hello@closedloop.dev?subject=Scoping%20call">Book a scoping call →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="brand">CLOSED LOOP — AI-Native Operations</div>
+    <div>Fractional CTO · remote · © 2026</div>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){
+        const sibs = [...e.target.parentElement.querySelectorAll('.reveal')];
+        const idx = sibs.indexOf(e.target);
+        e.target.style.transitionDelay = (Math.max(0,idx)*60)+'ms';
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
